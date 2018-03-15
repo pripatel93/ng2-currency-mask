@@ -25,10 +25,6 @@ export class InputService {
         rawValue = isNumber ? new Number(rawValue).toFixed(precision) : rawValue;
         let onlyNumbers = rawValue.replace(/[^0-9]/g, "");
 
-        if (!onlyNumbers) {
-            return "";
-        }
-
         let integerPart = onlyNumbers.slice(0, onlyNumbers.length - precision).replace(/^0*/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, thousands);
 
         if (integerPart == "") {
@@ -43,6 +39,10 @@ export class InputService {
             newRawValue += decimal + decimalPart;
         }
 
+        if (!onlyNumbers) {
+            return  prefix + "0" + decimal + decimalPart + suffix;
+        }
+        
         let isZero = parseInt(integerPart) == 0 && (parseInt(decimalPart) == 0 || decimalPart == "");
         let operator = (rawValue.indexOf("-") > -1 && allowNegative && !isZero) ? "-" : "";
         return operator + prefix + newRawValue + suffix;
@@ -50,7 +50,7 @@ export class InputService {
 
     clearMask(rawValue: string): number {
         if (rawValue == null || rawValue == "") {
-            return null;
+            return 0;
         }
 
         let value = rawValue.replace(this.options.prefix, "").replace(this.options.suffix, "");
